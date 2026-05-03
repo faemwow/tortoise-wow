@@ -6,3 +6,5 @@
 *.exe
 result*
 tortoise-files/
+./snapjaw-wow-bundle/ 
+./bundle-snapjaw-containers.sh
