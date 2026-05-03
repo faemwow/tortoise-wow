@@ -17,6 +17,7 @@ permissions: {}
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  CACHIX_CACHE_NAME: "tortoise-wow"
 
 jobs:
   build:
@@ -43,17 +44,29 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
-      - name: Setup Cachix
-        uses: cachix/cachix-action@1eb2ef646ac0255473d23a5907ad7b04ce94065c # v17
-        with:
-          name: tortoise-wow 
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Configure Cachix as pull cache
+        run: |
+          nix run nixpkgs#cachix -- use tortoise-wow
 
       - name: Build Docker images with Nix
         run: |
           nix build .#realmd-image-tar --out-link result-realmd-image-tar
           nix build .#mangosd-image-tar --out-link result-mangosd-image-tar
           nix build .#db-image-tar --out-link result-db-image-tar
+
+      - name: Scan with vulnix
+          run: |
+            nix run nixpkgs#vulnix -- --closes result-realmd-image-tar
+            nix run nixpkgs#vulnix -- --closes result-mangosd-image-tar
+            nix run nixpkgs#vulnix -- --closes result-db-image-tar
+
+      - name: Push to Cachix
+          run: |
+            nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME result-realmd-image-tar
+            nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME result-mangosd-image-tar
+            nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME result-db-image-tar
+          env:
+            CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Load images into Docker and capture digests
         id: load
@@ -104,7 +117,7 @@ jobs:
 
     steps:
       - name: Download image artifacts
-        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: docker-images
 
@@ -115,7 +128,7 @@ jobs:
           docker load < db.tar.gz
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -123,7 +136,7 @@ jobs:
 
       - name: Extract metadata for realmd
         id: meta-realmd
-        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a420667bea5 # v5.7.0
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-realmd
           tags: |
@@ -135,7 +148,7 @@ jobs:
 
       - name: Extract metadata for mangosd
         id: meta-mangosd
-        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a420667bea5 # v5.7.0
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-mangosd
           tags: |
@@ -147,7 +160,7 @@ jobs:
 
       - name: Extract metadata for db
         id: meta-db
-        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a420667bea5 # v5.7.0
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-db
           tags: |
@@ -178,7 +191,7 @@ jobs:
           push_image tortoise-wow-db:latest "${{ steps.meta-db.outputs.tags }}" db
 
       - name: Install cosign
-        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c5f8b8d4ae1e04d457d85 # v3.8.1
+        uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
 
       # Sign by digest so ALL tags (latest, branch, sha-*) are covered by one signature
       - name: Sign all images by digest
@@ -202,7 +215,7 @@ jobs:
 
     steps:
       - name: Generate SBOM for realmd
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
+        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
         with:
           image-ref: ${{ needs.publish.outputs.realmd-ref }}
           format: 'spdx-json'
@@ -210,7 +223,7 @@ jobs:
           exit-code: '0'
 
       - name: Generate SBOM for mangosd
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
+        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
         with:
           image-ref: ${{ needs.publish.outputs.mangosd-ref }}
           format: 'spdx-json'
@@ -218,7 +231,7 @@ jobs:
           exit-code: '0'
 
       - name: Generate SBOM for db
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
+        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
         with:
           image-ref: ${{ needs.publish.outputs.db-ref }}
           format: 'spdx-json'
@@ -226,7 +239,7 @@ jobs:
           exit-code: '0'
 
       - name: Run Trivy vulnerability scanner on realmd
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
+        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
         with:
           image-ref: ${{ needs.publish.outputs.realmd-ref }}
           format: 'sarif'
@@ -235,7 +248,7 @@ jobs:
           exit-code: '1'
 
       - name: Run Trivy vulnerability scanner on mangosd
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
+        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
         with:
           image-ref: ${{ needs.publish.outputs.mangosd-ref }}
           format: 'sarif'
@@ -244,7 +257,7 @@ jobs:
           exit-code: '1'
 
       - name: Run Trivy vulnerability scanner on db
-        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
+        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
         with:
           image-ref: ${{ needs.publish.outputs.db-ref }}
           format: 'sarif'
@@ -254,21 +267,21 @@ jobs:
 
       - name: Upload Trivy results for realmd to GitHub Security
         if: always()
-        uses: github/codeql-action/upload-sarif@ce28f5bb42b7a9f2c824e633a3f6ee835bab7f2f # v3.29.0
+        uses: github/codeql-action/upload-sarif@e46ed2cbd01164d986452f91f178727624ae40d7 # v4.35.3
         with:
           sarif_file: 'trivy-realmd.sarif'
           category: 'realmd'
 
       - name: Upload Trivy results for mangosd to GitHub Security
         if: always()
-        uses: github/codeql-action/upload-sarif@ce28f5bb42b7a9f2c824e633a3f6ee835bab7f2f # v3.29.0
+        uses: github/codeql-action/upload-sarif@e46ed2cbd01164d986452f91f178727624ae40d7 # v4.35.3
         with:
           sarif_file: 'trivy-mangosd.sarif'
           category: 'mangosd'
 
       - name: Upload Trivy results for db to GitHub Security
         if: always()
-        uses: github/codeql-action/upload-sarif@ce28f5bb42b7a9f2c824e633a3f6ee835bab7f2f # v3.29.0
+        uses: github/codeql-action/upload-sarif@e46ed2cbd01164d986452f91f178727624ae40d7 # v4.35.3
         with:
           sarif_file: 'trivy-db.sarif'
           category: 'db'
@@ -285,7 +298,7 @@ jobs:
 
       - name: Attach SBOMs to release
         if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@c95fe1489396fe8a9eb87c0abf8aa5b2ef267fda # v2.2.1
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0
         with:
           files: |
             sbom-realmd.spdx.json
