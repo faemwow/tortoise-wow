@@ -38,13 +38,13 @@ jobs:
           fetch-depth: 1
 
       - name: Install Nix
-        uses: cachix/install-nix-action@526118121622777cdbda4a0e197110c41fc4b8e8 # v31
+        uses: cachix/install-nix-action@ab739621df7a23f52766f9ccc97f38da6b7af14f # v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
       - name: Setup Cachix
-        uses: cachix/cachix-action@0fc020193a7a3ef9de4c47ab24f4b0c0c5bdc7f4 # v16
+        uses: cachix/cachix-action@1eb2ef646ac0255473d23a5907ad7b04ce94065c # v17
         with:
           name: your-cache-name
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
