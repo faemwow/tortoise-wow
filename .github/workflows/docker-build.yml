@@ -60,8 +60,8 @@ jobs:
           nix run nixpkgs#vulnix -- --closure $(readlink -f result-mangosd-image-tar)
           nix run nixpkgs#vulnix -- --closure $(readlink -f result-db-image-tar)
 
-     - name: Push to Cachix
-       run: |
+      - name: Push to Cachix
+        run: |
           nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME $(nix-store -qR result-realmd-image-tar)
           nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME $(nix-store -qR result-mangosd-image-tar)
           nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME $(nix-store -qR result-db-image-tar)
