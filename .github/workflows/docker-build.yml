@@ -56,9 +56,9 @@ jobs:
 
       - name: Scan with vulnix
         run: |
-          nix run nixpkgs#vulnix -- --closes result-realmd-image-tar
-          nix run nixpkgs#vulnix -- --closes result-mangosd-image-tar
-          nix run nixpkgs#vulnix -- --closes result-db-image-tar
+          nix run nixpkgs#vulnix -- --closure result-realmd-image-tar
+          nix run nixpkgs#vulnix -- --closure result-mangosd-image-tar
+          nix run nixpkgs#vulnix -- --closure result-db-image-tar
 
       - name: Push to Cachix
         run: |
