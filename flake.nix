@@ -140,33 +140,6 @@
               mangosd-wrapper
             ];
           };
-
-          # MariaDB startup script
-          mariadb-wrapper = pkgs.runCommand "start-mariadb" { } ''
-                          mkdir -p $out/bin
-                          cat > $out/bin/start-mariadb <<'EOF'
-            #!/bin/sh
-            set -e
-
-            # Set PATH to include MariaDB binaries
-            export PATH=${pkgs.mariadb}/bin:/bin:/usr/bin
-
-            # Create required directories at runtime
-            mkdir -p /tmp /var/lib/mysql /var/run/mysqld
-            chmod 1777 /tmp
-            chmod 777 /var/run/mysqld
-
-            # Initialize database if not already done
-            if [ ! -d "/var/lib/mysql/mysql" ]; then
-              mysql_install_db --datadir=/var/lib/mysql --auth-root-authentication-method=normal
-            fi
-
-            # Start MariaDB in foreground with TCP listening enabled
-            exec mysqld --user=root --datadir=/var/lib/mysql --skip-grant-tables --socket=/var/run/mysqld/mysqld.sock --bind-address=0.0.0.0
-            EOF
-                          chmod +x $out/bin/start-mariadb
-          '';
-
           # Realm server (game server) Docker image - nix2container version
           realmd-image = nix2containerPkgs.nix2container.buildImage {
             name = "tortoise-wow-realmd";
@@ -193,37 +166,6 @@
                 "8085/tcp" = { };
               };
             };
-          };
-
-          # Database (MariaDB) Docker image - nix2container version
-          db-image = nix2containerPkgs.nix2container.buildImage {
-            name = "tortoise-wow-db";
-            tag = "latest";
-            copyToRoot = pkgs.symlinkJoin {
-              name = "db-root";
-              paths = [
-                pkgs.mariadb
-                pkgs.bash
-                pkgs.coreutils
-                mariadb-wrapper
-              ];
-            };
-            config = {
-              entrypoint = [ "/bin/start-mariadb" ];
-              ExposedPorts = {
-                "3306/tcp" = { };
-              };
-            };
-            perms = [
-              {
-                path = "tmp";
-                mode = "1777";
-              }
-              {
-                path = "var/run/mysqld";
-                mode = "777";
-              }
-            ];
           };
 
           # Realm server Docker image - dockerTools version (produces .tar.gz)
@@ -259,38 +201,12 @@
               };
             };
           };
-
-          # Database (MariaDB) Docker image - dockerTools version (produces .tar.gz)
-          db-image-tar = pkgs.dockerTools.buildImage {
-            name = "tortoise-wow-db";
-            tag = "latest";
-            copyToRoot = [
-              pkgs.mariadb
-              pkgs.bash
-              pkgs.coreutils
-              pkgs.gnused
-              pkgs.gnugrep
-              pkgs.gawk
-              mariadb-wrapper
-            ];
-            config = {
-              Entrypoint = [ "/bin/start-mariadb" ];
-              ExposedPorts = {
-                "3306/tcp" = { };
-              };
-            };
-            extraCommands = ''
-              mkdir -p tmp var/run/mysqld
-              chmod 1777 tmp
-              chmod 777 var/run/mysqld
-            '';
-          };
         in
         {
           tortoise-wow = tortoiseWowPkg;
           default = tortoiseWowPkg;
-          inherit realmd-image mangosd-image db-image;
-          inherit realmd-image-tar mangosd-image-tar db-image-tar;
+          inherit realmd-image mangosd-image;
+          inherit realmd-image-tar mangosd-image-tar;
         }
       );
 

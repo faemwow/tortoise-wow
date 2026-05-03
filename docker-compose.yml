@@ -1,28 +1,61 @@
 services:
   db:
-    image: tortoise-wow-db:latest
+    image: mariadb:11
+    container_name: tortoise-wow-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mangos
+      MYSQL_PASSWORD: mangos
+      # Databases are typically created by the DB import scripts,
+      # so we don't set MYSQL_DATABASE here
     volumes:
-      - ./tortoise-files/db-data:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql
+      - ./data/mysql/init:/docker-entrypoint-initdb.d:ro   # Grant permission
+    networks:
+      - tortoise-wow-net
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   realmd:
-    image: tortoise-wow-realmd:latest
-    volumes:
-      - ./tortoise-files/etc/realmd.conf:/etc/realmd.conf
+    image: ghcr.io/faemwow/tortoise-wow-realmd:latest
+    container_name: tortoise-wow-realmd
+    restart: unless-stopped
     depends_on:
-      - db
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - ./data/etc/realmd.conf:/tortoise/realmd.conf:ro
+      - ./data/patches:/tortoise/patches:ro
     ports:
       - "3724:3724"
-    restart: on-failure
+    networks:
+      - tortoise-wow-net 
 
   mangosd:
-    image: tortoise-wow-mangosd:latest
-    volumes:
-      - ./tortoise-files/etc/mangosd.conf:/etc/mangosd.conf
-      - ./tortoise-files:/tortoise
+    image: ghcr.io/faemwow/tortoise-wow-mangosd:latest
+    container_name: tortoise-wow-mangosd
+    restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    volumes:
+      - ./data/etc/mangosd.conf:/tortoise/mangosd.conf:ro
+      - ./data/dbc:/tortoise/dbc:ro
+      - ./data/maps:/tortoise/maps:ro
+      - ./data/vmaps:/tortoise/vmaps:ro
+      - ./data/mmaps:/tortoise/mmaps:ro
     ports:
       - "8091:8091"
+    networks:
+      - tortoise-wow-net
+    stdin_open: true   
     tty: true
-    stdin_open: true
-    restart: on-failure
+
+networks:
+  tortoise-wow-net:
+    driver: bridge
