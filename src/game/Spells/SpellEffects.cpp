@@ -3334,7 +3334,6 @@ void Spell::EffectDummy(SpellEffectIndex eff_idx)
             }
             break;
         }
-<<<<<<< HEAD
         case SPELLFAMILY_ROGUE:
         {
             // Throwing Weapon Specialization Deadly Throw Poison

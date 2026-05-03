@@ -9831,12 +9831,8 @@ void Unit::ClearAllReactives()
         ModifyAuraState(AURA_STATE_DEFENSE, false);
     if (GetClass() == CLASS_HUNTER && HasAuraState(AURA_STATE_HUNTER_PARRY))
         ModifyAuraState(AURA_STATE_HUNTER_PARRY, false);
-<<<<<<< HEAD
     if (GetClass() == CLASS_ROGUE && HasAuraState(AURA_STATE_TARGET_DODGED))
         ModifyAuraState(AURA_STATE_TARGET_DODGED, false);
-=======
->>>>>>> 3f0e662 (Initial commit)
-
     if (GetClass() == CLASS_WARRIOR && IsPlayer())
         static_cast<Player*>(this)->ClearComboPoints();
 }
@@ -9869,13 +9865,10 @@ void Unit::UpdateReactives(uint32 p_time)
                     if (GetClass() == CLASS_WARRIOR && IsPlayer())
                         static_cast<Player*>(this)->ClearComboPoints();
                     break;
-<<<<<<< HEAD
                 case REACTIVE_ROGUE_DODGE:
                     if (GetClass() == CLASS_ROGUE && HasAuraState(AURA_STATE_TARGET_DODGED))
                         ModifyAuraState(AURA_STATE_TARGET_DODGED, false);
                     break;
-=======
->>>>>>> 3f0e662 (Initial commit)
                 default:
                     break;
             }
