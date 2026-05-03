@@ -59,22 +59,3 @@ Contributions are welcome, but I may be slow to review and merge PRs
 
 See `CONTRIBUTING.md` for ways to get started.
 
-
-[1]: http://git-scm.com/ "Git - Distributed version control system"
-[2]: http://windows.github.com/ "github - windows client"
-[3]: https://dev.mysql.com/downloads/ "MySQL - The world's most popular open source database"
-[4]: https://mariadb.org/download/ "MariaDB - An enhanced, drop-in replacement for MySQL"
-[5]: http://www.dre.vanderbilt.edu/~schmidt/ACE.html "ACE - The ADAPTIVE Communication Environment"
-[6]: http://sourceforge.net/projects/g3d/ "G3D - G3D Innovation Engine"
-[7]: http://zezula.net/en/mpq/stormlib.html "Stormlib - A library for reading data from MPQ archives"
-[8]: http://www.zlib.net/ "Zlib"
-[9]: http://gnuwin32.sourceforge.net/packages/zlib.htm "Zlib for Windows"
-[10]: http://www.bzip.org/ "Bzip2"
-[11]: http://gnuwin32.sourceforge.net/packages/bzip2.htm "Bzip2 for Windows"
-[12]: http://www.openssl.org/ "OpenSSL - The Open Source toolkit for SSL/TLS"
-[13]: http://slproweb.com/products/Win32OpenSSL.html "OpenSSL for Windows"
-[14]: http://www.ubuntu.com/ "Ubuntu - The world's most popular free OS"
-[15]: http://windows.microsoft.com/ "Microsoft Windows"
-[19]: https://github.com/ElunaLuaEngine/Eluna
-[20]: https://github.com/ike3/mangosbot-bots
-[21]: http://github.com/memononen/recastnavigation "Recast - Navigation-mesh Toolset for Games"

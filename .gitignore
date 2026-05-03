@@ -4,3 +4,5 @@
 /.vscode/
 *.kate-swp
 *.exe
+result*
+tortoise-files/
