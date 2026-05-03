@@ -49,11 +49,11 @@ jobs:
           name: tortoise-wow 
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-    - name: Build Docker images with Nix
-      run: |
-        nix build .#realmd-image-tar --out-link result-realmd-image-tar
-        nix build .#mangosd-image-tar --out-link result-mangosd-image-tar
-        nix build .#db-image-tar --out-link result-db-image-tar
+      - name: Build Docker images with Nix
+        run: |
+          nix build .#realmd-image-tar --out-link result-realmd-image-tar
+          nix build .#mangosd-image-tar --out-link result-mangosd-image-tar
+          nix build .#db-image-tar --out-link result-db-image-tar
 
       - name: Load images into Docker and capture digests
         id: load
