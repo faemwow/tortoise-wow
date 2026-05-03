@@ -215,7 +215,7 @@ jobs:
 
     steps:
       - name: Generate SBOM for realmd
-        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ needs.publish.outputs.realmd-ref }}
           format: 'spdx-json'
@@ -223,7 +223,7 @@ jobs:
           exit-code: '0'
 
       - name: Generate SBOM for mangosd
-        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ needs.publish.outputs.mangosd-ref }}
           format: 'spdx-json'
@@ -231,7 +231,7 @@ jobs:
           exit-code: '0'
 
       - name: Generate SBOM for db
-        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ needs.publish.outputs.db-ref }}
           format: 'spdx-json'
@@ -239,7 +239,7 @@ jobs:
           exit-code: '0'
 
       - name: Run Trivy vulnerability scanner on realmd
-        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ needs.publish.outputs.realmd-ref }}
           format: 'sarif'
@@ -248,7 +248,7 @@ jobs:
           exit-code: '1'
 
       - name: Run Trivy vulnerability scanner on mangosd
-        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ needs.publish.outputs.mangosd-ref }}
           format: 'sarif'
@@ -257,7 +257,7 @@ jobs:
           exit-code: '1'
 
       - name: Run Trivy vulnerability scanner on db
-        uses: aquasecurity/trivy-action@8a3177aedf7ee0864920eb1852eef031cd3742b8 # v0.70.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
           image-ref: ${{ needs.publish.outputs.db-ref }}
           format: 'sarif'
