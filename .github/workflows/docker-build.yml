@@ -46,7 +46,7 @@ jobs:
       - name: Setup Cachix
         uses: cachix/cachix-action@1eb2ef646ac0255473d23a5907ad7b04ce94065c # v17
         with:
-          name: your-cache-name
+          name: tortoise-wow 
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
       - name: Build Docker images with Nix
