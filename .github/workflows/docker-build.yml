@@ -60,13 +60,13 @@ jobs:
           nix run nixpkgs#vulnix -- --closure $(readlink -f result-mangosd-image-tar)
           nix run nixpkgs#vulnix -- --closure $(readlink -f result-db-image-tar)
 
-      - name: Push to Cachix
-        run: |
-          nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME result-realmd-image-tar
-          nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME result-mangosd-image-tar
-          nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME result-db-image-tar
+     - name: Push to Cachix
+       run: |
+          nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME $(nix-store -qR result-realmd-image-tar)
+          nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME $(nix-store -qR result-mangosd-image-tar)
+          nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME $(nix-store -qR result-db-image-tar)
         env:
-            CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Load images into Docker and capture digests
         id: load
