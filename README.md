@@ -53,6 +53,25 @@ To build this project follow any MaNGOS/MaNGOS Zero build guide, with the additi
 
 This will be streamlined once the core is more up to date
 
+## Extracting DBC, MMAP, MAP, VMAP
+These come from proprietary files we do not distribute. If you have access to a Turtle-WoW client (1.18.1), you can extract this via
+```
+export TORTOISE_DATA_DIR=./data
+export WOW_CLIENT_DIR=/path/to/twow-client
+
+docker run --rm -it \
+  -v ${TORTOISE_DATA_DIR:-./data}/dbc:/tortoise/dbc \
+  -v ${TORTOISE_DATA_DIR:-./data}/maps:/tortoise/maps \
+  -v ${TORTOISE_DATA_DIR:-./data}/vmaps:/tortoise/vmaps \
+  -v ${TORTOISE_DATA_DIR:-./data}/mmaps:/tortoise/mmaps \
+  -v ${WOW_CLIENT_DIR}:/wow-client \
+  -v ./run-local-extractors.sh:/script/run-local-extractors.sh \
+  --entrypoint /bin/bash \
+  ghcr.io/faemwow/tortoise-wow-mangosd:latest \
+  /script/run-local-extractors.sh
+```
+
+
 ## Contributing
 
 Contributions are welcome, but I may be slow to review and merge PRs
