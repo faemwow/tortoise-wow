@@ -7,11 +7,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: mangos
       MYSQL_PASSWORD: mangos
-      # Databases are typically created by the DB import scripts,
-      # so we don't set MYSQL_DATABASE here
     volumes:
-      - ./data/mysql:/var/lib/mysql
-      - ./data/mysql/init:/docker-entrypoint-initdb.d:ro   # Grant permission
+      - ${TORTOISE_DATA_DIR:-./data}/mysql:/var/lib/mysql
+      - ${TORTOISE_DATA_DIR:-./data}/mysql/init:/docker-entrypoint-initdb.d:ro
     networks:
       - tortoise-wow-net
     healthcheck:
@@ -20,22 +18,19 @@ services:
       timeout: 5s
       retries: 10
       start_period: 30s
-
   realmd:
     image: ghcr.io/faemwow/tortoise-wow-realmd:latest
     container_name: tortoise-wow-realmd
     restart: unless-stopped
     depends_on:
-      mariadb:
+      db:
         condition: service_healthy
     volumes:
-      - ./data/etc/realmd.conf:/tortoise/realmd.conf:ro
-      - ./data/patches:/tortoise/patches:ro
+      - ${TORTOISE_DATA_DIR:-./data}/etc/realmd.conf:/tortoise/realmd.conf:ro
     ports:
       - "3724:3724"
     networks:
-      - tortoise-wow-net 
-
+      - tortoise-wow-net
   mangosd:
     image: ghcr.io/faemwow/tortoise-wow-mangosd:latest
     container_name: tortoise-wow-mangosd
@@ -44,16 +39,16 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./data/etc/mangosd.conf:/tortoise/mangosd.conf:ro
-      - ./data/dbc:/tortoise/dbc:ro
-      - ./data/maps:/tortoise/maps:ro
-      - ./data/vmaps:/tortoise/vmaps:ro
-      - ./data/mmaps:/tortoise/mmaps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/etc/mangosd.conf:/tortoise/mangosd.conf:ro
+      - ${TORTOISE_DATA_DIR:-./data}/dbc:/tortoise/dbc:ro
+      - ${TORTOISE_DATA_DIR:-./data}/maps:/tortoise/maps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/vmaps:/tortoise/vmaps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/mmaps:/tortoise/mmaps:ro
     ports:
-      - "8091:8091"
+      - "8085:8085"
     networks:
       - tortoise-wow-net
-    stdin_open: true   
+    stdin_open: true
     tty: true
 
 networks:

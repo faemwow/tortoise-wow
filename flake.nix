@@ -73,7 +73,7 @@
             "-DCMAKE_BUILD_TYPE=Release"
             "-DUSE_PCH=OFF"
             "-DUSE_STD_MALLOC=ON"
-            "-DUSE_EXTRACTORS=OFF"
+            "-DUSE_EXTRACTORS=ON"
             "-DBUILD_FOR_HOST_CPU=OFF"
             "-DCMAKE_INSTALL_PREFIX=${placeholder "out"}"
             "-DOPENSSL_ROOT_DIR=${pkgs.openssl.dev}"
