@@ -21,7 +21,7 @@ DataDir = "/tortoise/data"
 #        Logs directory setting.
 #        Important: Logs dir must exists, or all logs need to be disabled
 
-LogsDir = "tortoise/logs/"
+LogsDir = "/tortoise/logs/"
 
 #
 #	HonorDir
