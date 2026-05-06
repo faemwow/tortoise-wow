@@ -70,7 +70,24 @@ docker run --rm -it \
   ghcr.io/faemwow/tortoise-wow-mangosd:latest \
   /script/run-local-extractors.sh
 ```
+Extracting is a one time process that can take hours.
 
+## Using docker
+This is instructions for Linux. You can configure the containers by modifying `docker-compose.yml` or making your own.
+
+Starting MariaDB, Mangosd, Realmd
+```
+git clone https://github.com/faemwow/tortoise-wow/
+cd tortoise-wow
+#populate data/ directory
+docker compose up -d
+```
+
+Use the mangosd console (account creates etc)
+```
+docker compose attach mangosd
+# Control + p then Control + q to detach from the mangosd console. Do not control + c as it will kill mangosd. 
+```
 
 ## Contributing
 
