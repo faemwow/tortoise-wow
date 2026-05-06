@@ -83,7 +83,7 @@ MaxPingTime = 30
 #    WorldServerPort
 #        Port on which the server will listen.
 
-WorldServerPort = 8085
+WorldServerPort = 8091
 
 #
 #    BindIP

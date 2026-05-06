@@ -58,12 +58,14 @@ jobs:
           nix run nixpkgs#vulnix -- --closure $(readlink -f result-mangosd-image-tar)
 
       - name: Push compiled binaries to Cachix
+        if: github.event_name != 'pull_request'
         run: |
           nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME $(nix-store -qR $(nix path-info .#tortoise-wow))
         env:
           CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Push image tarballs to Cachix
+        if: github.event_name != 'pull_request'
         run: |
           nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME $(nix-store -qR $(readlink -f result-realmd-image-tar))
           nix run nixpkgs#cachix -- push $CACHIX_CACHE_NAME $(nix-store -qR $(readlink -f result-mangosd-image-tar))
