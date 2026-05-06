@@ -21,6 +21,11 @@ $MYSQL tw_logon -e "
 INSERT INTO realmlist (name, address, port, icon, realmflags, timezone, allowedSecurityLevel, population, realmbuilds)
 VALUES ('Project Snapjaw', '127.0.0.1', 8085, 0, 0, 1, 0, 0, '5875')
 ON DUPLICATE KEY UPDATE address=VALUES(address), port=VALUES(port);
+GRANT ALL PRIVILEGES ON tw_world.* TO 'mangos'@'%';
+GRANT ALL PRIVILEGES ON tw_char.* TO 'mangos'@'%';
+GRANT ALL PRIVILEGES ON tw_logon.* TO 'mangos'@'%';
+GRANT ALL PRIVILEGES ON tw_logs.* TO 'mangos'@'%';
+FLUSH PRIVILEGES;
 "
 
 echo "=== Done! ==="
