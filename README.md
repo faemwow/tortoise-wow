@@ -75,6 +75,8 @@ Extracting is a one time process that can take hours.
 ## Using docker
 This is instructions for Linux. You can configure the containers by modifying `docker-compose.yml` or making your own.
 
+TODO: I need these tested on Windows and MacOS. Docker Desktop instructions might differ.
+
 Starting MariaDB, Mangosd, Realmd
 ```
 git clone https://github.com/faemwow/tortoise-wow/
@@ -88,6 +90,10 @@ Use the mangosd console (account creates etc)
 docker compose attach mangosd
 # Control + p then Control + q to detach from the mangosd console. Do not control + c as it will kill mangosd. 
 ```
+
+### Troubleshooting
+Docker compose on Linux sometimes has issues with network bridges. You can use network host if you are okay with the containers running as if they were a process on the and using host ports. 
+
 
 ## Contributing
 
