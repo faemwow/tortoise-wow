@@ -10,6 +10,7 @@ services:
     volumes:
       - ${TORTOISE_DATA_DIR:-./data}/mysql:/var/lib/mysql
       - ${TORTOISE_DATA_DIR:-./data}/mysql/init:/docker-entrypoint-initdb.d:ro
+      - ./sql/:/sql_imports/
     networks:
       - tortoise-wow-net
     healthcheck:
@@ -26,7 +27,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ${TORTOISE_DATA_DIR:-./data}/etc/realmd.conf:/tortoise/realmd.conf:ro
+      - ${TORTOISE_DATA_DIR:-./data}/etc/realmd.conf:/etc/realmd.conf:ro
     ports:
       - "3724:3724"
     networks:
@@ -39,12 +40,12 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ${TORTOISE_DATA_DIR:-./data}/etc/mangosd.conf:/tortoise/mangosd.conf:ro
+      - ${TORTOISE_DATA_DIR:-./data}/etc/mangosd.conf:/etc/mangosd.conf:ro
       - ${TORTOISE_DATA_DIR:-./data}/dbc:/tortoise/dbc:ro
       - ${TORTOISE_DATA_DIR:-./data}/maps:/tortoise/maps:ro
       - ${TORTOISE_DATA_DIR:-./data}/vmaps:/tortoise/vmaps:ro
       - ${TORTOISE_DATA_DIR:-./data}/mmaps:/tortoise/mmaps:ro
-      - ${TORTOISE_DATA_DIR:-/.sql}:/tortoise/sql:ro #sql files from repo
+      - ${TORTOISE_DATA_DIR:-./sql}:/tortoise/sql:ro #sql files from repo
     ports:
       - "8085:8085"
     networks:
