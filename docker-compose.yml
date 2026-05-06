@@ -41,11 +41,12 @@ services:
         condition: service_healthy
     volumes:
       - ${TORTOISE_DATA_DIR:-./data}/etc/mangosd.conf:/etc/mangosd.conf:ro
-      - ${TORTOISE_DATA_DIR:-./data}/dbc:/tortoise/dbc:ro
+      - ${TORTOISE_DATA_DIR:-./data}/dbc:/tortoise/data/dbc:ro
       - ${TORTOISE_DATA_DIR:-./data}/maps:/tortoise/data/maps:ro
       - ${TORTOISE_DATA_DIR:-./data}/vmaps:/tortoise/data/vmaps:ro
       - ${TORTOISE_DATA_DIR:-./data}/mmaps:/tortoise/data/mmaps:ro
       - ${TORTOISE_DATA_DIR:-./sql}:/tortoise/sql:ro #sql files from repo
+      - ./sql/unused:/tortoise/sql/unused #db_autoupdate needs this
     ports:
       - "8085:8085"
     networks:

@@ -77,7 +77,7 @@ This is instructions for Linux. You can configure the containers by modifying `d
 
 TODO: I need these tested on Windows and MacOS. Docker Desktop instructions might differ.
 
-Starting MariaDB, Mangosd, Realmd
+### Starting MariaDB, Mangosd, Realmd
 ```
 git clone https://github.com/faemwow/tortoise-wow/
 cd tortoise-wow
@@ -85,10 +85,30 @@ cd tortoise-wow
 docker compose up -d
 ```
 
-Use the mangosd console (account creates etc)
+#### View logs for containers
+```
+docker compose logs db 
+```
+
+the data/mysql/ should be clean for initalizing. You can delete everything except data/mysql/init/*. 
+#### Manually applying sql db updates (usually not needed)
+
+```
+docker compose exec db bash -c 'for f in /sql_imports/base/tw_world_*.sql; do
+  [ -e "$f" ] || continue
+  mariadb -uroot -proot "tw_world" < "$f"
+done
+'
+```
+
+### Use the mangosd console (account creates etc)
 ```
 docker compose attach mangosd
-# Control + p then Control + q to detach from the mangosd console. Do not control + c as it will kill mangosd. 
+account create snapjaw snapjaw
+Account created: snapjaw
+mangos>
+# Control + p then Control + q to detach from the mangosd console. 
+# Do not control + c as it will kill mangosd. 
 ```
 
 ### Troubleshooting
