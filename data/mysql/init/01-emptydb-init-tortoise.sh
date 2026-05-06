@@ -16,7 +16,14 @@ run_sql() {
 echo "=== Step 1: Creating databases ==="
 $MYSQL < "$SQL_DIR/create_databases.sql"
 
-echo "=== Step 2: Adding realm entry ==="
+echo "=== Step 2: Applying base world tables ==="
+# We glob the files inside the container's mount path
+for f in "$SQL_DIR"/base/tw_world_*.sql; do
+  [ -e "$f" ] || continue
+  run_sql "tw_world" "$f"
+done
+
+echo "=== Step 3: Adding realm entry ==="
 $MYSQL tw_logon -e "
 INSERT INTO realmlist (name, address, port, icon, realmflags, timezone, allowedSecurityLevel, population, realmbuilds)
 VALUES ('Project Snapjaw', '127.0.0.1', 8085, 0, 0, 1, 0, 0, '5875')
