@@ -42,9 +42,9 @@ services:
     volumes:
       - ${TORTOISE_DATA_DIR:-./data}/etc/mangosd.conf:/etc/mangosd.conf:ro
       - ${TORTOISE_DATA_DIR:-./data}/dbc:/tortoise/dbc:ro
-      - ${TORTOISE_DATA_DIR:-./data}/maps:/tortoise/maps:ro
-      - ${TORTOISE_DATA_DIR:-./data}/vmaps:/tortoise/vmaps:ro
-      - ${TORTOISE_DATA_DIR:-./data}/mmaps:/tortoise/mmaps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/maps:/tortoise/data/maps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/vmaps:/tortoise/data/vmaps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/mmaps:/tortoise/data/mmaps:ro
       - ${TORTOISE_DATA_DIR:-./sql}:/tortoise/sql:ro #sql files from repo
     ports:
       - "8085:8085"
