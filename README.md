@@ -73,7 +73,9 @@ docker run --rm -it \
 Extracting is a one time process that can take hours.
 
 ## Using docker
-This is instructions for Linux. You can configure the containers by modifying `docker-compose.yml` or making your own.
+Containers are not security boundaries like virtual machines are. Treat it like it's running on your host. Trivvy and Vulnix are used to do security scans in the CICD pipeline to help identify CVEs or other dangerous dependencies.  
+
+These instructions for primarily for Linux. You can configure the containers by modifying `docker-compose.yml` or making your own.
 
 TODO: I need these tested on Windows and MacOS. Docker Desktop instructions might differ.
 
@@ -88,6 +90,8 @@ docker compose up -d
 #### View logs for containers
 ```
 docker compose logs db 
+docker compose logs mangosd 
+docker compose logs realmd 
 ```
 
 the data/mysql/ should be clean for initalizing. You can delete everything except data/mysql/init/*. 
