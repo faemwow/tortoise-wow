@@ -25,8 +25,8 @@ jobs:
       packages: write
 
     outputs:
-      realmd-digest: ${{ steps.load.outputs.realmd-digest }}
-      mangosd-digest: ${{ steps.load.outputs.mangosd-digest }}
+      realmd-digest-dev: ${{ steps.load.outputs.realmd-digest-dev }}
+      mangosd-digest-dev: ${{ steps.load.outputs.mangosd-digest-dev }}
 
     steps:
       - name: Checkout repository
@@ -70,13 +70,13 @@ jobs:
           docker load < result-realmd-image-tar-dev
           docker load < result-mangosd-image-tar-dev
 
-          echo "realmd-digest=$(docker inspect --format='{{index .Id}}' tortoise-wow-realmd:latest)" >> $GITHUB_OUTPUT
-          echo "mangosd-digest=$(docker inspect --format='{{index .Id}}' tortoise-wow-mangosd:latest)" >> $GITHUB_OUTPUT
+          echo "realmd-digest-dev=$(docker inspect --format='{{index .Id}}' tortoise-wow-realmd-dev:latest)" >> $GITHUB_OUTPUT
+          echo "mangosd-digest-dev=$(docker inspect --format='{{index .Id}}' tortoise-wow-mangosd-dev:latest)" >> $GITHUB_OUTPUT
 
       - name: Verify images are loaded
         run: |
-          docker image inspect tortoise-wow-realmd:latest
-          docker image inspect tortoise-wow-mangosd:latest
+          docker image inspect tortoise-wow-realmd-dev:latest
+          docker image inspect tortoise-wow-mangosd-dev:latest
 
       - name: Export images as tarballs for artifact sharing
         run: |
@@ -101,8 +101,8 @@ jobs:
       id-token: write
 
     outputs:
-      realmd-ref: ${{ steps.push.outputs.realmd-ref }}
-      mangosd-ref: ${{ steps.push.outputs.mangosd-ref }}
+      realmd-dev-ref: ${{ steps.push.outputs.realmd-dev-ref }}
+      mangosd-dev-ref: ${{ steps.push.outputs.mangosd-dev-ref }}
 
     steps:
       - name: Download image artifacts
@@ -123,7 +123,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata for realmd-dev
-        id: meta-realmd
+        id: meta-realmd-dev
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-realmd-dev
@@ -133,7 +133,7 @@ jobs:
             type=sha,prefix=sha-,format=long
 
       - name: Extract metadata for mangosd-dev
-        id: meta-mangosd
+        id: meta-mangosd-dev
         uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-mangosd-dev
@@ -157,16 +157,16 @@ jobs:
             digest=$(docker manifest inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${output_key}:sha-${{ github.sha }} --verbose 2>/dev/null | jq -r '.Descriptor.digest' || docker inspect --format='{{index .RepoDigests 0}}' $local_tag | cut -d@ -f2)
             echo "${output_key}-ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${output_key}@${digest}" >> $GITHUB_OUTPUT
           }
-          push_image tortoise-wow-realmd:latest "${{ steps.meta-realmd.outputs.tags }}" realmd-dev
-          push_image tortoise-wow-mangosd:latest "${{ steps.meta-mangosd.outputs.tags }}" mangosd-dev
+          push_image tortoise-wow-realmd-dev:latest "${{ steps.meta-realmd.outputs.tags }}" realmd-dev
+          push_image tortoise-wow-mangosd-dev:latest "${{ steps.meta-mangosd.outputs.tags }}" mangosd-dev
 
       - name: Install cosign
         uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
 
       - name: Sign all images by digest
         run: |
-          cosign sign --yes ${{ steps.push.outputs.realmd-ref }}
-          cosign sign --yes ${{ steps.push.outputs.mangosd-ref }}
+          cosign sign --yes ${{ steps.push.outputs.realmd-dev-ref }}
+          cosign sign --yes ${{ steps.push.outputs.mangosd-dev-ref }}
         env:
           COSIGN_EXPERIMENTAL: true
 
