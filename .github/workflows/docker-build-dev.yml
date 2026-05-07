@@ -80,8 +80,8 @@ jobs:
 
       - name: Export images as tarballs for artifact sharing
         run: |
-          docker save tortoise-wow-realmd:latest | gzip > realmd-dev.tar.gz
-          docker save tortoise-wow-mangosd:latest | gzip > mangosd-dev.tar.gz
+          docker save tortoise-wow-realmd-dev:latest | gzip > realmd-dev.tar.gz
+          docker save tortoise-wow-mangosd-dev:latest | gzip > mangosd-dev.tar.gz
 
       - name: Upload image artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -157,8 +157,8 @@ jobs:
             digest=$(docker manifest inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${output_key}:sha-${{ github.sha }} --verbose 2>/dev/null | jq -r '.Descriptor.digest' || docker inspect --format='{{index .RepoDigests 0}}' $local_tag | cut -d@ -f2)
             echo "${output_key}-ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${output_key}@${digest}" >> $GITHUB_OUTPUT
           }
-          push_image tortoise-wow-realmd-dev:latest "${{ steps.meta-realmd.outputs.tags }}" realmd-dev
-          push_image tortoise-wow-mangosd-dev:latest "${{ steps.meta-mangosd.outputs.tags }}" mangosd-dev
+          push_image tortoise-wow-realmd-dev:latest "${{ steps.meta-realmd-dev.outputs.tags }}" realmd-dev
+          push_image tortoise-wow-mangosd-dev:latest "${{ steps.meta-mangosd-dev.outputs.tags }}" mangosd-dev
 
       - name: Install cosign
         uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
@@ -183,7 +183,7 @@ jobs:
       - name: Generate SBOM for realmd-dev
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: ${{ needs.publish.outputs.realmd-ref }}
+          image-ref: ${{ needs.publish.outputs.realmd-dev-ref }}
           format: 'spdx-json'
           output: 'sbom-realmd-dev.spdx.json'
           exit-code: '0'
@@ -191,7 +191,7 @@ jobs:
       - name: Generate SBOM for mangosd-dev
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: ${{ needs.publish.outputs.mangosd-ref }}
+          image-ref: ${{ needs.publish.outputs.mangosd-dev-ref }}
           format: 'spdx-json'
           output: 'sbom-mangosd-dev.spdx.json'
           exit-code: '0'
