@@ -153,7 +153,9 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
               account.c_str(),
               clientSeed);
 
-    // Check the version of client trying to connect
+    // World auth validates the build token that arrives on the world-session
+    // handshake. For Turtle this can differ from the newer login build that
+    // realmd uses for realm-list compatibility and display.
     if (!IsAcceptableClientBuild(BuiltNumberClient))
     {
         packet.Initialize(SMSG_AUTH_RESPONSE, 1);
@@ -161,7 +163,8 @@ int WorldSocket::HandleAuthSession(WorldPacket& recvPacket)
 
         SendPacket(packet);
 
-        sLog.outError("WorldSocket::HandleAuthSession: Sent Auth Response (version mismatch).");
+        sLog.outError("WorldSocket::HandleAuthSession: Sent Auth Response (version mismatch). account='%s' clientBuild=%u serverId=%u acceptable='%s'",
+        account.c_str(), BuiltNumberClient, serverId, AcceptableClientBuildsListStr().c_str());
         return -1;
     }
 
