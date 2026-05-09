@@ -35,7 +35,6 @@ services:
       - "3724:3724"
     networks:
       - tortoise-wow-net
-      - tortoise-wow-dev-net
 
   # ── Prod Mangosd ───────────────────────────────────────────────────────────
   mangosd:
@@ -75,7 +74,6 @@ services:
       - ${DEV_SQL_DIR:-../tortoise-wow-dev/}/sql:/sql_imports/
     networks:
       - tortoise-wow-net
-      - tortoise-wow-dev-net
     healthcheck:
       test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 10s
@@ -102,13 +100,12 @@ services:
     ports:
       - "8086:8086"
     networks:
-      - tortoise-wow-dev-net
+      - tortoise-wow-net
     stdin_open: true
     tty: true
 
 networks:
   tortoise-wow-net:
     driver: bridge
-  tortoise-wow-dev-net:
-    driver: bridge
+
 
