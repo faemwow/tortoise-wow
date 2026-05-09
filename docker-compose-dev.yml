@@ -1,0 +1,111 @@
+services:
+  # ── Prod DB (also used by realmd) ─────────────────────────────────────────
+  db:
+    image: mariadb:11
+    container_name: tortoise-wow-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mangos
+      MYSQL_PASSWORD: mangos
+    volumes:
+      - ${TORTOISE_DATA_DIR:-./data}/mysql:/var/lib/mysql
+      - ${TORTOISE_DATA_DIR:-./data}/mysql/init:/docker-entrypoint-initdb.d:ro
+      - ./sql/:/sql_imports/
+    networks:
+      - tortoise-wow-net
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Shared Realmd ──────────────────────────────────────────────────────────
+  realmd:
+    image: ghcr.io/faemwow/tortoise-wow-realmd:latest
+    container_name: tortoise-wow-realmd
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ${TORTOISE_DATA_DIR:-./data}/etc/realmd.conf:/etc/realmd.conf:ro
+    ports:
+      - "3724:3724"
+    networks:
+      - tortoise-wow-net
+
+  # ── Prod Mangosd ───────────────────────────────────────────────────────────
+  mangosd:
+    image: ghcr.io/faemwow/tortoise-wow-mangosd:latest
+    container_name: tortoise-wow-mangosd
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ${TORTOISE_DATA_DIR:-./data}/etc/mangosd.conf:/etc/mangosd.conf:ro
+      - ${TORTOISE_DATA_DIR:-./data}/dbc:/tortoise/data/dbc:ro
+      - ${TORTOISE_DATA_DIR:-./data}/maps:/tortoise/data/maps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/vmaps:/tortoise/data/vmaps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/mmaps:/tortoise/data/mmaps:ro
+      - ./sql/:/sql_imports:ro
+      - ./sql/unused:/tortoise/sql/unused
+    ports:
+      - "8085:8085"
+    networks:
+      - tortoise-wow-net
+    stdin_open: true
+    tty: true
+
+  # ── Dev DB ─────────────────────────────────────────────────────────────────
+  db-dev:
+    image: mariadb:11
+    container_name: tortoise-wow-db-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mangos
+      MYSQL_PASSWORD: mangos
+    volumes:
+      - ${DEV_SQL_DIR:-../tortoise-wow-dev}/data/mysql:/var/lib/mysql
+      - ${DEV_SQL_DIR:-../tortoise-wow-dev}/data/mysql/init:/docker-entrypoint-initdb.d:ro
+      - ${DEV_SQL_DIR:-../tortoise-wow-dev/}/sql:/sql_imports/
+    networks:
+      - tortoise-wow-net
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ── Dev Mangosd ────────────────────────────────────────────────────────────
+  mangosd-dev:
+    image: ghcr.io/faemwow/tortoise-wow-mangosd-dev:latest
+    container_name: tortoise-wow-mangosd-dev
+    restart: unless-stopped
+    depends_on:
+      db-dev:
+        condition: service_healthy
+    volumes:
+      - ${TORTOISE_DATA_DIR:-./data}/etc/mangosd-dev.conf:/etc/mangosd.conf:ro
+      - ${TORTOISE_DATA_DIR:-./data}/dbc:/tortoise/data/dbc:ro
+      - ${TORTOISE_DATA_DIR:-./data}/maps:/tortoise/data/maps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/vmaps:/tortoise/data/vmaps:ro
+      - ${TORTOISE_DATA_DIR:-./data}/mmaps:/tortoise/data/mmaps:ro
+      - ${DEV_SQL_DIR:-../tortoise-wow-dev}/sql:/sql_imports:ro
+      - ${DEV_SQL_DIR:-../tortoise-wow-dev}/sql/unused:/tortoise/sql/unused
+    ports:
+      - "8086:8086"
+    networks:
+      - tortoise-wow-net
+    stdin_open: true
+    tty: true
+
+networks:
+  tortoise-wow-net:
+    driver: bridge
+
+
