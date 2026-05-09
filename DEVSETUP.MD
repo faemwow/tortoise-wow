@@ -4,19 +4,30 @@
 `cp data/etc/mangosd.conf data/etc/mangosd-dev.conf`
 ```
 # Then edit mangosd-dev.conf:
+RealmID = 2
+
 WorldServerPort = 8086
-LoginDatabaseInfo = "db-dev;3306;mangos;mangos;tw_logon"
-WorldDatabaseInfo = "db-dev;3306;mangos;mangos;mangos"
-CharacterDatabaseInfo = "db-dev;3306;mangos;mangos;characters"
-```
-```
-# Add the dev realm to the realmlist (run after stack is up), this should be on the db not db-dev since thats what realmd uses.
-INSERT INTO realmlist (name, address, port, icon, realmflags, timezone, allowedSecurityLevel, population, realmbuilds)
-VALUES ('Project Snapjaw Dev', '192.168.1.x', 8086, 0, 0, 1, 0, 0, 5875);
+LoginDatabase.Info = "db;3306;mangos;mangos;tw_logon"
+WorldDatabase.Info = "db-dev;3306;mangos;mangos;tw_world"
+CharacterDatabase.Info = "db-dev;3306;mangos;mangos;tw_char"
+LogsDatabase.Info  = "db-dev;3306;mangos;mangos;tw_logs"
+
 ```
 
 # Bring everything up
 `sudo docker compose -f docker-compose-dev.yml up -d`
 
-# To sync dev sql later
+# Update to latest docker images
+`sudo docker compose -f docker-compose-dev.yml pull`
+
+# to turn off
+`sudo docker compose -f docker-compose-dev.yml down`
+
+# get a shell on a container 
+`sudo docker compose -f docker-compose-dev.yml exec db bash`
+
+# use mangosd console
+`sudo docker compose -f docker-compose-dev.yml attach mangosd`
+
+# To sync dev sql for the dev-db
 `cd ~/tortoise-wow-dev && git pull`
