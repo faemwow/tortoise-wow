@@ -128,7 +128,7 @@ namespace
         // mangosd keeps a world-session compatibility list rather than reusing
         // realmd's login-build registry directly. Turtle clients may authenticate
         // to realmd as newer builds while still presenting a legacy world token.
-        Tokens tokens = StrSplit(sConfig.GetStringDefault("SupportedClientBuilds", "7200 7205 7207 7234 7272"), " ,");
+        Tokens tokens = StrSplit(sConfig.GetStringDefault("SupportedClientBuilds", "5875 7200 7205 7207 7234 7272"), " ,");
         std::vector<uint32> builds;
         builds.reserve(tokens.size());
 
