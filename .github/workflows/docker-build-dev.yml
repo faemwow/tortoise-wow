@@ -101,8 +101,8 @@ jobs:
       id-token: write
 
     outputs:
-      realmd-dev-ref: ${{ steps.push.outputs.realmd-dev-ref }}
-      mangosd-dev-ref: ${{ steps.push.outputs.mangosd-dev-ref }}
+      realmd-dev-ref: ${{ steps.push.outputs.realmd-dev_ref }}
+      mangosd-dev-ref: ${{ steps.push.outputs.mangosd-dev_ref }}
 
     steps:
       - name: Download image artifacts
@@ -146,16 +146,16 @@ jobs:
         id: push
         run: |
           push_image() {
-            local local_tag=$1
-            local tags=$2
-            local output_key=$3
-            local digest=""
-            for tag in $tags; do
-              docker tag $local_tag $tag
-              docker push $tag
-            done
-            digest=$(docker manifest inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${output_key}:sha-${{ github.sha }} --verbose 2>/dev/null | jq -r '.Descriptor.digest' || docker inspect --format='{{index .RepoDigests 0}}' $local_tag | cut -d@ -f2)
-            echo "${output_key}-ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${output_key}@${digest}" >> $GITHUB_OUTPUT
+          local local_tag=$1
+          local tags=$2
+          local output_key=$3
+          local digest=""
+          for tag in $tags; do
+            docker tag $local_tag $tag
+            docker push $tag
+          done
+          digest=$(docker manifest inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${output_key}:sha-${{ github.sha }} --verbose 2>/dev/null | jq -r '.Descriptor.digest' || docker inspect --format='{{index .RepoDigests 0}}' $local_tag | cut -d@ -f2)
+          echo "${output_key}_ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${output_key}@${digest}" >> $GITHUB_OUTPUT
           }
           push_image tortoise-wow-realmd-dev:latest "${{ steps.meta-realmd-dev.outputs.tags }}" realmd-dev
           push_image tortoise-wow-mangosd-dev:latest "${{ steps.meta-mangosd-dev.outputs.tags }}" mangosd-dev
@@ -165,8 +165,8 @@ jobs:
 
       - name: Sign all images by digest
         run: |
-          cosign sign --yes ${{ steps.push.outputs.realmd-dev-ref }}
-          cosign sign --yes ${{ steps.push.outputs.mangosd-dev-ref }}
+          cosign sign --yes ${{ steps.push.outputs.realmd-dev_ref }}
+          cosign sign --yes ${{ steps.push.outputs.mangosd-dev_ref }}
         env:
           COSIGN_EXPERIMENTAL: true
 
@@ -199,7 +199,7 @@ jobs:
       - name: Run Trivy vulnerability scanner on realmd-dev
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: ${{ needs.publish.outputs.realmd-ref }}
+          image-ref: ${{ needs.publish.outputs.realmd-dev-ref }}
           format: 'sarif'
           output: 'trivy-realmd-dev.sarif'
           severity: 'CRITICAL,HIGH'
@@ -208,7 +208,7 @@ jobs:
       - name: Run Trivy vulnerability scanner on mangosd-dev
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
-          image-ref: ${{ needs.publish.outputs.mangosd-ref }}
+          image-ref: ${{ needs.publish.outputs.mangosd-dev-ref }}
           format: 'sarif'
           output: 'trivy-mangosd-dev.sarif'
           severity: 'CRITICAL,HIGH'
