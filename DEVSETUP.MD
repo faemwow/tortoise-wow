@@ -1,6 +1,5 @@
 # Clone the dev branch for its sql files
-git clone -b 1181dev https://github.com:faemwow/tortoise-wow.git ../tortoise-wow-dev
-
+`git clone -b 1181dev 'https://github.com/faemwow/tortoise-wow.git' ../tortoise-wow-dev`
 # Copy your existing mangosd.conf and adjust for dev
 `cp data/etc/mangosd.conf data/etc/mangosd-dev.conf`
 ```
