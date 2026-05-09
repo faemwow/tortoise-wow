@@ -120,7 +120,7 @@ typedef std::vector<std::string> StoreProblemList;
 
 bool IsAcceptableClientBuild(uint32 build)
 {
-    int accepted_versions[] = { 5875, 0 };
+    int accepted_versions[] = { 7272, 0 };
     for (int i = 0; accepted_versions[i]; ++i)
         if (int(build) == accepted_versions[i])
             return true;
@@ -131,7 +131,7 @@ bool IsAcceptableClientBuild(uint32 build)
 std::string AcceptableClientBuildsListStr()
 {
     std::ostringstream data;
-    int accepted_versions[] = { 5875, 0 };
+    int accepted_versions[] = { 7272, 0 };
     for (int i = 0; accepted_versions[i]; ++i)
         data << accepted_versions[i] << " ";
     return data.str();
