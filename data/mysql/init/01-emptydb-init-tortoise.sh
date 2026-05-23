@@ -24,18 +24,10 @@ for f in "$SQL_DIR"/base/tw_world_*.sql; do
 done
 
 echo "=== Step 3: Adding realm entry ==="
-# Determine address: Use REALM_HOST_ADDRESS if set, otherwise default to 127.0.0.1
-FINAL_ADDR="${REALM_HOST_ADDRESS:-127.0.0.1}"
-
 $MYSQL tw_logon -e "
-INSERT INTO realmlist (id, name, address, port, icon, realmflags, timezone, allowedSecurityLevel, population, realmbuilds)
-VALUES (1, 'Project Snapjaw', '$FINAL_ADDR', 8085, 0, 0, 1, 0, 0, '5875,7272')
+INSERT INTO realmlist (name, address, port, icon, realmflags, timezone, allowedSecurityLevel, population, realmbuilds)
+VALUES ('Project Snapjaw', '127.0.0.1', 8085, 0, 0, 1, 0, 0, '5875')
 ON DUPLICATE KEY UPDATE address=VALUES(address), port=VALUES(port);
-
-INSERT INTO realmlist (id, name, address, port, icon, realmflags, timezone, allowedSecurityLevel, population, realmbuilds)
-VALUES (2, 'Dev Snapjaw', '$FINAL_ADDR', 8086, 0, 0, 1, 0, 0, '5875,7272')
-ON DUPLICATE KEY UPDATE address=VALUES(address), port=VALUES(port);
-
 GRANT ALL PRIVILEGES ON tw_world.* TO 'mangos'@'%';
 GRANT ALL PRIVILEGES ON tw_char.* TO 'mangos'@'%';
 GRANT ALL PRIVILEGES ON tw_logon.* TO 'mangos'@'%';
@@ -43,7 +35,5 @@ GRANT ALL PRIVILEGES ON tw_logs.* TO 'mangos'@'%';
 FLUSH PRIVILEGES;
 "
 
-echo "=== Step 4: Create Allowed Client Builds ==="
-$MYSQL tw_logon < "$SQL_DIR/allowed_client_setup.sql"
 echo "=== Done! ==="
 
