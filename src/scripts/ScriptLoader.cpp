@@ -86,6 +86,19 @@ void AddSC_boss_halgan_redbrand();
 void AddSC_boss_searistrasz();
 void AddSC_boss_zuluhed_the_whacked();
 
+void AddSC_instance_stormwrought_ruins();            //stormwrought_ruins
+void AddSC_boss_chieftain_stormsong();
+void AddSC_boss_dagar_the_glutton();
+void AddSC_boss_deathlord_tidebane();
+void AddSC_boss_duke_balor_iv();
+void AddSC_boss_eldermaw_the_primordial();
+void AddSC_boss_ighalfor();
+void AddSC_boss_lady_drazare();
+void AddSC_boss_librarian_theodorus();
+void AddSC_boss_mycellakos();
+void AddSC_boss_oronok_torn_heart();
+void AddSC_boss_subjugator_halthas_shadecrest();
+
 void AddSC_gnomeregan();                             //gnomeregan
 void AddSC_boss_thermaplugg();
 void AddSC_instance_gnomeregan();
@@ -318,6 +331,10 @@ void AddSC_boss_hargesh_doomcaller();
 void AddSC_boss_hatereaver_annhilator();
 void AddSC_trash_mobs_hateforge_quarry();
 
+// Windhorn Canyon
+void AddSC_boss_bonespeaker_narlgom();
+void AddSC_windhorn_canyon();
+
 // Stormwind Vaults
 void AddSC_boss_aszosh_grimflame();
 void AddSC_boss_black_bride();
@@ -422,6 +439,18 @@ void AddScripts()
     AddSC_boss_halgan_redbrand();
     AddSC_boss_searistrasz();
     AddSC_boss_zuluhed_the_whacked();
+    AddSC_instance_stormwrought_ruins();                    //stormwrought_ruins
+    AddSC_boss_chieftain_stormsong();
+    AddSC_boss_dagar_the_glutton();
+    AddSC_boss_deathlord_tidebane();
+    AddSC_boss_duke_balor_iv();
+    AddSC_boss_eldermaw_the_primordial();
+    AddSC_boss_ighalfor();
+    AddSC_boss_lady_drazare();
+    AddSC_boss_librarian_theodorus();
+    AddSC_boss_mycellakos();
+    AddSC_boss_oronok_torn_heart();
+    AddSC_boss_subjugator_halthas_shadecrest();
     AddSC_gnomeregan();                                     //gnomeregan
     AddSC_boss_thermaplugg();
     AddSC_instance_gnomeregan();
@@ -596,6 +625,10 @@ void AddScripts()
     AddSC_thunder_bluff();
     AddSC_ungoro_crater();
     AddSC_winterspring();
+
+    // Windhorn Canyon
+    AddSC_boss_bonespeaker_narlgom();
+    AddSC_windhorn_canyon();
 
     // Stormwind Vaults
     AddSC_boss_aszosh_grimflame();
