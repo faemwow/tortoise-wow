@@ -63,6 +63,7 @@
 #include "Util.h"
 #include "CharacterDatabaseCleaner.h"
 #include "LFGMgr.h"
+#include "LFTMgr.h"
 #include "AutoBroadCastMgr.h"
 #include "Transports/TransportMgr.h"
 #include "PlayerBotMgr.h"
@@ -1915,6 +1916,8 @@ void LoadPlayerEggLoot();
 
     sLog.outString("Loading chat channels...");
     sObjectMgr.LoadChatChannels();
+    sLog.outString("Loading script names...");
+    sScriptMgr.LoadScriptNames();
     sLog.outString("Loading spells...");
     sSpellMgr.LoadSpells();
     sLog.outString("Loading factions...");
@@ -1937,8 +1940,6 @@ void LoadPlayerEggLoot();
     LoadDBCStores(m_dataPath);
     DetectDBCLang();
     sObjectMgr.SetDBCLocaleIndex(GetDefaultDbcLocale());    // Get once for all the locale index of DBC language (console/broadcasts)
-    sLog.outString("Loading script names...");
-    sScriptMgr.LoadScriptNames();
     sLog.outString("Loading map templates...");
     sObjectMgr.LoadMapTemplate();
     sLog.outString("Loading area templates...");
@@ -2528,6 +2529,7 @@ void World::Update(uint32 diff)
     sMapMgr.Update(diff);
     sBattleGroundMgr.Update(diff);
     sLFGMgr.Update(diff);
+    sLFTMgr.Update(diff);
     sGuardMgr.Update(diff);
     sZoneScriptMgr.Update(diff);
     sDynamicVisMgr.UpdateVisibility(diff);

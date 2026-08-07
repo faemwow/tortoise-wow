@@ -633,7 +633,7 @@ struct go_survival_tent : public GameObjectAI
                 for (Player* pPlayer : players)
                 {
                     pPlayer->SetFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING);
-                    pPlayer->SetRestBonus(static_cast<float>(pPlayer->GetRestBonus() + (sObjectMgr.GetXPForLevel(pPlayer->GetLevel()) * 0.000575)));
+                    pPlayer->AddRestBonus(sObjectMgr.GetXPForLevel(pPlayer->GetLevel()) * Player::RESTED_XP_TENT_RATE, pPlayer->GetRestBonusCap(Player::RESTED_XP_TENT_CAP));
                 }
                 m_uiUpdateTimer = 1000;
             }
@@ -1775,9 +1775,9 @@ bool GossipSelect_npc_flying_machine(Player* player, Creature* creature, uint32 
         return true;
 
     if (uiAction == GOSSIP_ACTION_INFO_DEF + 1)
-        player->ActivateTaxiPathTo(1619, 0, true); // Weeeee!
+        player->ActivateTaxiPathTo(311, 0, true); // Weeeee!
     if (uiAction == GOSSIP_ACTION_INFO_DEF + 2)
-        player->ActivateTaxiPathTo(1633, 0, true); // Weeeee!
+        player->ActivateTaxiPathTo(322, 0, true); // Weeeee!
     player->CLOSE_GOSSIP_MENU();
     return true;
 }
@@ -1862,17 +1862,18 @@ bool GossipSelect_rented_mount(Player* pPlayer, Creature* pCreature, uint32 /*ui
         {
             switch (pCreature->GetEntry())
             {
-                case 51560: spell = 468;    break; // White Stallion
-                case 51561: spell = 471;    break; // Palomino
-                case 51580: spell = 6653;   break; // Dire Riding Wolf
-                case 51581: spell = 580;    break; // Timber Riding Wolf
-                case 51588: spell = 17462;  break; // Red Skeletal Horse
-                case 51589: spell = 17463;  break; // Blue Skeletal Horse
-                case 51587: spell = 17464;  break; // Brown Skeletal Horse
-                case 4779:  spell = 6899;   break; // Brown Riding Ram
-                case 4710:  spell = 6777;   break; // Gray Riding Ram
-                case 12354: spell = 18990;  break; // Brown Riding Kodo
-                case 12355: spell = 18989;  break; // Gray Riding Kodo
+                case 51560: spell = 40701;    break; // White Stallion
+                case 51561: spell = 40700;    break; // Palomino
+                case 51580: spell = 40702;   break; // Dire Riding Wolf
+                case 51581: spell = 40703;    break; // Timber Riding Wolf
+                case 51588: spell = 40704;  break; // Red Skeletal Horse
+                case 51589: spell = 40705;  break; // Blue Skeletal Horse
+                case 51587: spell = 40706;  break; // Brown Skeletal Horse
+                case 4779:  spell = 40707;   break; // Brown Riding Ram
+                case 4710:  spell = 40708;   break; // Gray Riding Ram
+                case 12354: spell = 40709;  break; // Brown Riding Kodo
+                case 12355: spell = 40710;  break; // Gray Riding Kodo
+                case 40045: spell = 40711; break; // Thalassian Unicorn
                 default:
                     break;
             }
@@ -2776,7 +2777,7 @@ bool GOSelect_go_fm_acquisition(Player* pPlayer, GameObject* pGo, uint32 sender,
             pPlayer->DestroyItemCount(6948, 1, true);
             pPlayer->SaveInventoryAndGoldToDB();
         }
-        pPlayer->ActivateTaxiPathTo(1619, 0, true); // Weeeee!
+        pPlayer->ActivateTaxiPathTo(311, 0, true); // Weeeee!
     }
     return true;
 }

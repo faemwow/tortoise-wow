@@ -24,6 +24,7 @@
 #include "CreatureAI.h"
 #include "Map.h"
 #include "Player.h"
+#include "SpellAuras.h"
 #include "ObjectAccessor.h"
 #include "UnitEvents.h"
 #include "TargetedMovementGenerator.h"
@@ -51,6 +52,18 @@ float ThreatCalcHelper::CalcThreat(Unit* pHatedUnit, float threat, bool crit, Sp
     }
 
     threat = pHatedUnit->ApplyTotalThreatModifier(threat, schoolMask);
+    Unit::SpellAuraHolderMap const& auraHolders = pHatedUnit->GetSpellAuraHolderMap();
+    for (auto const& holderItr : auraHolders)
+    {
+        SpellAuraHolder* holder = holderItr.second;
+        if (!holder || !holder->GetAuraScript())
+            continue;
+
+        for (int32 i = 0; i < MAX_EFFECT_INDEX; ++i)
+            if (Aura* aura = holder->GetAuraByEffectIndex(SpellEffectIndex(i)))
+                holder->GetAuraScript()->OnThreatCalculate(aura, pThreatSpell, schoolMask, threat);
+    }
+
     return threat;
 }
 
@@ -417,6 +430,19 @@ void ThreatManager::addThreat(Unit* pVictim, float threat, bool crit, SpellSchoo
             threat = 0.0f;
     
     float totalThreat = ThreatCalcHelper::CalcThreat(pVictim, threat, crit, schoolMask, pThreatSpell);
+    if (pVictim->IsCreature() && static_cast<Creature*>(pVictim)->IsTotem())
+    {
+        if (Unit* owner = pVictim->GetOwner())
+        {
+            int32 const transferPercent = pVictim->GetTotalAuraModifier(SPELL_AURA_TRANSFER_TOTEM_THREAT);
+            if (transferPercent > 0)
+            {
+                float const transferredThreat = totalThreat * transferPercent / 100.0f;
+                addThreatDirectly(owner, transferredThreat);
+                totalThreat -= transferredThreat;
+            }
+        }
+    }
     addThreatDirectly(pVictim, totalThreat);
 }
 
