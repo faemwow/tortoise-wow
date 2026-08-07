@@ -39,7 +39,7 @@ HardcoreModeLogFile = "hardcore.log"
 
 LoginDatabase.Info = "127.0.0.1;3306;mangos;mangos;tw_logon"
 WorldDatabase.Info = "127.0.0.1;3306;mangos;mangos;tw_world"
-CharacterDatabase.Info = "127.0.0.1;3306;mangos;mangos;tw_chars"
+CharacterDatabase.Info = "127.0.0.1;3306;mangos;mangos;tw_char"
 LogsDatabase.Info = "127.0.0.1;3306;mangos;mangos;tw_logs"
 
 # DB Auto-updater
@@ -49,6 +49,12 @@ Database.AutoUpdate.Path = "../../sql/"
 Database.AutoUpdate.AuthUpdateName = "unused"
 Database.AutoUpdate.CharUpdateName = "unused"
 Database.AutoUpdate.WorldUpdateName = "database_updates"
+
+# Database.AutoUpdate.SortByName. Controls the order in which SQL migration files are applied.  
+#   0 = Sort by file modification time ascending (oldest first); alphabetical name as tiebreaker. (Default)  
+#   1 = Sort alphabetically by file name ascending; modification time as tiebreaker.  
+  
+Database.AutoUpdate.SortByName = 1
 
 # Automatically committing world changes to github. Set to 0 to disable.
 
